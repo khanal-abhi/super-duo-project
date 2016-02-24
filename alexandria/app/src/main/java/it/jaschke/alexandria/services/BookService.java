@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import it.jaschke.alexandria.MainActivity;
@@ -43,7 +44,7 @@ public class BookService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent (Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
             if (FETCH_BOOK.equals(action)) {
@@ -128,8 +129,11 @@ public class BookService extends IntentService {
                 return;
             }
             bookJsonString = buffer.toString();
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Error ", e);
+        } catch (MalformedURLException e){
+            Log.e(LOG_TAG, "Url error: ", e);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Network connection error:  ", e);
+            return;
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -142,6 +146,10 @@ public class BookService extends IntentService {
                 }
             }
 
+        }
+
+        if(bookJsonString == null){
+            Log.v(getClass().getSimpleName(), "The response data came out to be null.");
         }
 
         final String ITEMS = "items";
