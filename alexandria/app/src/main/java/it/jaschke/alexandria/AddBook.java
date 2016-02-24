@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -106,8 +107,15 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 //                Toast toast = Toast.makeText(context, text, duration);
 //                toast.show();
 
-                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-                startActivityForResult(intent, SCAN_INTENT);
+                try {
+//                    This will work if the intent can be loaded i.e. if zxing app is already installed.
+                    Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+                    startActivityForResult(intent, SCAN_INTENT);
+                } catch (Exception e){
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.google.zxing.client.android&hl=en"));
+                    startActivity(intent);
+                }
             }
         });
 
