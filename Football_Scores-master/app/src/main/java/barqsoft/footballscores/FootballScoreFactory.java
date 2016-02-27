@@ -32,6 +32,12 @@ public class FootballScoreFactory implements RemoteViewsService.RemoteViewsFacto
     @Override
     public void onCreate() {
 
+
+    }
+
+    @Override
+    public void onDataSetChanged() {
+
         String[] date = new String[1];
         scoreList = new ArrayList<>();
 
@@ -70,10 +76,6 @@ public class FootballScoreFactory implements RemoteViewsService.RemoteViewsFacto
 
         Log.v(getClass().getSimpleName(), scoreList.toString());
 
-    }
-
-    @Override
-    public void onDataSetChanged() {
     }
 
     @Override
