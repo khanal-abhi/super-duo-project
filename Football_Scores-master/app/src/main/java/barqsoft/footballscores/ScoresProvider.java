@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by yehya khaled on 2/25/2015.
@@ -95,6 +96,13 @@ public class ScoresProvider extends ContentProvider
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
+        Log.v(getClass().getSimpleName(), uri.toString());
+//        Log.v(getClass().getSimpleName(), projection.toString());
+//        Log.v(getClass().getSimpleName(), selection);
+//        Log.v(getClass().getSimpleName(), selectionArgs.toString());
+//        Log.v(getClass().getSimpleName(), sortOrder);
+
+
         Cursor retCursor;
         //Log.v(FetchScoreTask.LOG_TAG,uri.getPathSegments().toString());
         int match = match_uri(uri);
