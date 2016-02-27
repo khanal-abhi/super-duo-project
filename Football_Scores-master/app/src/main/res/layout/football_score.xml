@@ -4,9 +4,20 @@
     android:background="#09C"
     android:padding="@dimen/widget_margin">
 
-   <ListView
-       android:id="@+id/widget_list_view"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"></ListView>
+    <ListView
+        android:background="@color/red01"
+        android:id="@+id/widget_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <TextView
+        android:background="@color/green01"
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"/>
+
+
 
 </RelativeLayout>
