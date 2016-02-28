@@ -5,6 +5,7 @@
     android:padding="@dimen/widget_margin">
 
     <TextView
+        android:id="@+id/title"
         android:text="@string/widget_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -13,6 +14,7 @@
         android:id="@+id/widget_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/title"
         />
 
     <TextView
