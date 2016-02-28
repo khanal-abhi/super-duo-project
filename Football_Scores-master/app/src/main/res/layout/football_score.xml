@@ -4,14 +4,19 @@
     android:background="#09C"
     android:padding="@dimen/widget_margin">
 
+    <TextView
+        android:text="@string/widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ListView
-        android:background="@color/red01"
         android:id="@+id/widget_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
 
     <TextView
+        android:textSize="36sp"
         android:background="@color/green01"
         android:id="@+id/empty_view"
         android:layout_width="match_parent"

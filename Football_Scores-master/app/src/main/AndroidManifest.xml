@@ -38,8 +38,7 @@
 
         <service android:name=".service.myFetchService"/>
         <service android:name=".FootballScoreService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
-            />
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver android:name=".FootballScore">
             <intent-filter>

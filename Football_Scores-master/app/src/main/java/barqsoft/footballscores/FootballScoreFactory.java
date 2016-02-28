@@ -5,23 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
+import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by abhi on 2/26/16.
  */
 public class FootballScoreFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private List<WidgetScore> scoreList;
     private Context context;
     private int appWidgetId;
+    private Cursor cursor;
 
     public FootballScoreFactory(Context context, Intent intent){
         this.context = context;
@@ -29,74 +27,76 @@ public class FootballScoreFactory implements RemoteViewsService.RemoteViewsFacto
 
     }
 
+
     @Override
     public void onCreate() {
-
-
     }
 
     @Override
     public void onDataSetChanged() {
 
+        if(cursor != null){
+            cursor.close();
+        }
+
         String[] date = new String[1];
-        scoreList = new ArrayList<>();
-
-        for (int i = 0; i < 7; i++){
-            Date fragmentdate = new Date(System.currentTimeMillis()+((i-2)*86400000));
-            SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
-            date[0] = (mformat.format(fragmentdate));
-
-            Cursor cursor = context.getContentResolver().query(
+        Date filterDate = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        date[0] = format.format(filterDate);
+        try {
+            cursor = context.getContentResolver().query(
                     Uri.parse("content://barqsoft.footballscores/date"),
                     null,
                     null,
                     date,
                     null
             );
-
-            if(cursor != null){
-                cursor.moveToFirst();
-                try {
-                    do{
-                        scoreList.add(new WidgetScore(
-                                cursor.getString(cursor.getColumnIndex(DatabaseContract.scores_table.LEAGUE_COL)),
-                                cursor.getString(cursor.getColumnIndex(DatabaseContract.scores_table.HOME_COL)),
-                                cursor.getString(cursor.getColumnIndex(DatabaseContract.scores_table.AWAY_COL)),
-                                cursor.getInt(cursor.getColumnIndex(DatabaseContract.scores_table.HOME_GOALS_COL)),
-                                cursor.getInt(cursor.getColumnIndex(DatabaseContract.scores_table.AWAY_GOALS_COL))
-                        ));
-                    } while (cursor.moveToNext());
-                } catch (Exception e){
-                    e.printStackTrace();
-                } finally {
-                    cursor.close();
-                }
-            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
-
-        Log.v(getClass().getSimpleName(), scoreList.toString());
 
     }
 
     @Override
     public void onDestroy() {
 
+        if(cursor != null){
+            cursor.close();
+        }
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return cursor == null ? 0 : cursor.getCount();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
 
+        if(position == AdapterView.INVALID_POSITION || cursor == null || !cursor.moveToPosition(position))
+            return null;
+
+        String leagueName, home, away, homeGoal, awayGoal;
+        leagueName = home = away = homeGoal = awayGoal = "";
+
+        if(cursor.moveToPosition(position)){
+            leagueName = cursor.getString(cursor.getColumnIndex(DatabaseContract.scores_table.TIME_COL));
+            home = cursor.getString(cursor.getColumnIndex(DatabaseContract.scores_table.HOME_COL));
+            away = cursor.getString(cursor.getColumnIndex(DatabaseContract.scores_table.AWAY_COL));
+            homeGoal = String.valueOf(cursor.getInt(cursor.getColumnIndex(DatabaseContract.scores_table.HOME_GOALS_COL)));
+            awayGoal = String.valueOf(cursor.getInt(cursor.getColumnIndex(DatabaseContract.scores_table.AWAY_GOALS_COL)));
+        }
+
         RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_list_item);
-        rv.setTextViewText(R.id.league_name, scoreList.get(position).getLeague());
-        rv.setTextViewText(R.id.home, scoreList.get(position).getHome());
-        rv.setTextViewText(R.id.away, scoreList.get(position).getAway());
-        rv.setTextViewText(R.id.home_score, scoreList.get(position).getHome_goal() == -1 ? "-" : String.valueOf(scoreList.get(position).getHome_goal()));
-        rv.setTextViewText(R.id.away_score, scoreList.get(position).getAway_goal() == -1 ? "-" : String.valueOf(scoreList.get(position).getAway_goal()));
+        rv.setTextViewText(R.id.league_name, leagueName);
+        rv.setTextViewText(R.id.home, home);
+        rv.setTextViewText(R.id.away, away);
+        rv.setTextViewText(R.id.home_score, homeGoal.contentEquals("-1")? "-" : homeGoal);
+        rv.setTextViewText(R.id.away_score, awayGoal.contentEquals("-1")? "-" : awayGoal);
+
+        // Crests
+        rv.setImageViewResource(R.id.home_crest, Utilies.getTeamCrestByTeamName(home));
+        rv.setImageViewResource(R.id.away_crest, Utilies.getTeamCrestByTeamName(away));
 
         return rv;
     }
@@ -108,7 +108,7 @@ public class FootballScoreFactory implements RemoteViewsService.RemoteViewsFacto
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
