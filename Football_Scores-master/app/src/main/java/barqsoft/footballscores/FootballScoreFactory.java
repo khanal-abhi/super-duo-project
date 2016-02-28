@@ -1,5 +1,6 @@
 package barqsoft.footballscores;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -91,12 +92,17 @@ public class FootballScoreFactory implements RemoteViewsService.RemoteViewsFacto
         rv.setTextViewText(R.id.league_name, leagueName);
         rv.setTextViewText(R.id.home, home);
         rv.setTextViewText(R.id.away, away);
-        rv.setTextViewText(R.id.home_score, homeGoal.contentEquals("-1")? "-" : homeGoal);
-        rv.setTextViewText(R.id.away_score, awayGoal.contentEquals("-1")? "-" : awayGoal);
+        rv.setTextViewText(R.id.home_score, homeGoal.contentEquals("-1") ? "-" : homeGoal);
+        rv.setTextViewText(R.id.away_score, awayGoal.contentEquals("-1") ? "-" : awayGoal);
 
         // Crests
         rv.setImageViewResource(R.id.home_crest, Utilies.getTeamCrestByTeamName(home));
         rv.setImageViewResource(R.id.away_crest, Utilies.getTeamCrestByTeamName(away));
+
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        rv.setOnClickPendingIntent(R.id.widget_clicker, pendingIntent);
 
         return rv;
     }
